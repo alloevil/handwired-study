@@ -1,0 +1,271 @@
+{
+  "$comment": "Executable receipts for the numbers this repository publishes in prose. Run with `verify-claims --root . run` (alloevil/verify-claims); CI runs it via .github/workflows/claims.yml. Each check runs scripts/setup.sh first, which pins chenglou/handwired at 257856e.",
+  "project": "handwired-study",
+  "repository": "https://github.com/alloevil/handwired-study",
+  "updated": "2026-10-17",
+  "claims": [
+    {
+      "id": "pinned-upstream-commit",
+      "claim": "Every spike runs against chenglou/handwired pinned at commit 257856e.",
+      "value": "257856e3b221140acb4cc4460626b850c0bd4ff1",
+      "metric": "HEAD of vendor/handwired after scripts/setup.sh",
+      "method": "setup.sh clones upstream and checks out the pinned commit; git prints HEAD.",
+      "repro": "git -C vendor/handwired rev-parse HEAD",
+      "evidence": "scripts/setup.sh",
+      "as_of": "2026-10-17",
+      "check": {
+        "cmd": [
+          "bash scripts/setup.sh > /dev/null 2>&1",
+          "git -C vendor/handwired rev-parse HEAD"
+        ],
+        "expect": {
+          "equals": "257856e3b221140acb4cc4460626b850c0bd4ff1"
+        },
+        "timeout": 180
+      }
+    },
+    {
+      "id": "r2r-reference-vs-compiled",
+      "claim": "In the R2R EWMA circuit (40 runs per lot, 1,718 live operations), the reference and compiled evaluators differ in 0 of 3,840 outputs.",
+      "value": "0 / 3840",
+      "metric": "bitwise comparison of evaluateReference and createTensorEvaluator outputs",
+      "method": "spikes/r2r-ewma.ts prints the counts.",
+      "repro": "bun spikes/r2r-ewma.ts",
+      "evidence": "spikes/r2r-ewma.out",
+      "as_of": "2026-10-17",
+      "check": {
+        "cmd": [
+          "bash scripts/setup.sh > /dev/null 2>&1",
+          "bun spikes/r2r-ewma.ts"
+        ],
+        "expect": {
+          "contains": [
+            "live 1718",
+            "reference vs tensor mismatches = 0 / 3840"
+          ]
+        },
+        "timeout": 180
+      }
+    },
+    {
+      "id": "r2r-gradient-training",
+      "claim": "Gradient training through the circuit lowers test MSE from 293.39 (hand-tuned lambda=0.3, g=1/9) to 185.81 (lambda=0.7881, g=0.1110) on synthetic lots.",
+      "value": "293.39 -> 185.81",
+      "metric": "mean squared error vs target on 16 held-out synthetic lots",
+      "method": "Adam on dL/dlambda and dL/dg from backpropagateReference, 300 steps x 16 training lots.",
+      "repro": "bun spikes/r2r-ewma.ts",
+      "evidence": "spikes/r2r-ewma.out",
+      "as_of": "2026-10-17",
+      "check": {
+        "cmd": [
+          "bash scripts/setup.sh > /dev/null 2>&1",
+          "bun spikes/r2r-ewma.ts"
+        ],
+        "expect": {
+          "contains": [
+            "hand-tuned lambda=0.3 g=1/B_NOM=0.1111: train MSE 288.90, test MSE 293.39",
+            "gradient-trained: lambda=0.7881 g=0.1110 train MSE 189.40, test MSE 185.81"
+          ]
+        },
+        "timeout": 180
+      }
+    },
+    {
+      "id": "r2r-fine-grid-agrees",
+      "claim": "A 12,120-evaluation fine grid lands on the same optimum (train MSE 189.40) as gradient training; the coarse 2,050-evaluation grid stops at lambda=0.78, g=0.1120 (train MSE 206.61, test MSE 202.64).",
+      "value": "189.40 / 206.61 / 202.64",
+      "metric": "train MSE at the best grid point",
+      "method": "Plain JS grid search over lambda and g.",
+      "repro": "bun spikes/r2r-check.ts && bun spikes/r2r-ewma.ts",
+      "evidence": "spikes/r2r-check.out; spikes/r2r-ewma.out",
+      "as_of": "2026-10-17",
+      "check": {
+        "cmd": [
+          "bash scripts/setup.sh > /dev/null 2>&1",
+          "bun spikes/r2r-check.ts && bun spikes/r2r-ewma.ts"
+        ],
+        "expect": {
+          "contains": [
+            "fine grid (12120 evals): lambda=0.790 g=0.1110 MSE 189.40",
+            "grid search (2050 evals, 50x41): lambda=0.78 g=0.1120 train MSE 206.61, test MSE 202.64"
+          ]
+        },
+        "timeout": 180
+      }
+    },
+    {
+      "id": "threshold-zero-gradient",
+      "claim": "A threshold compared with emitCompare gets zero gradient at all three probe points, as issue #1 reports.",
+      "value": "0",
+      "metric": "d alarm / d thr from backpropagateReference",
+      "method": "spikes/fdc-threshold.ts probes x = 60, 40, 50.0001 against thr = 50.",
+      "repro": "bun spikes/fdc-threshold.ts | grep -c 'd alarm/d thr=0 '",
+      "evidence": "spikes/fdc-threshold.out; https://github.com/chenglou/handwired/issues/1",
+      "as_of": "2026-10-17",
+      "check": {
+        "cmd": [
+          "bash scripts/setup.sh > /dev/null 2>&1",
+          "bun spikes/fdc-threshold.ts | grep -c 'd alarm/d thr=0 '"
+        ],
+        "expect": {
+          "equals": "3"
+        },
+        "timeout": 180
+      }
+    },
+    {
+      "id": "fuzz-reference-vs-compiled",
+      "claim": "Across 300 seeded random programs x 40 inputs in two build modes, reference and compiled evaluators never differ.",
+      "value": "0 / 226,960",
+      "metric": "count of 'reference != tensor' lines (absent means 0)",
+      "method": "spikes/diff-fuzz.ts only prints non-zero counters.",
+      "repro": "bun spikes/diff-fuzz.ts",
+      "evidence": "spikes/diff-fuzz.out",
+      "as_of": "2026-10-17",
+      "check": {
+        "cmd": [
+          "bash scripts/setup.sh > /dev/null 2>&1",
+          "bun spikes/diff-fuzz.ts"
+        ],
+        "expect": {
+          "contains": [
+            "affine: values compared: 113480",
+            "roundAffine: values compared: 113480"
+          ],
+          "not_contains": [
+            "reference != tensor"
+          ]
+        },
+        "timeout": 180
+      }
+    },
+    {
+      "id": "fuzz-roundaffine-vs-fround",
+      "claim": "Written with roundAffine, the circuit equals step-by-step Math.fround JS on all 113,480 values.",
+      "value": "0 / 113,480",
+      "metric": "first mismatch vs JS-fround in roundAffine mode",
+      "method": "spikes/diff-fuzz.ts records the first mismatch; null means none.",
+      "repro": "bun spikes/diff-fuzz.ts",
+      "evidence": "spikes/diff-fuzz.out",
+      "as_of": "2026-10-17",
+      "check": {
+        "cmd": [
+          "bash scripts/setup.sh > /dev/null 2>&1",
+          "bun spikes/diff-fuzz.ts"
+        ],
+        "expect": {
+          "contains": [
+            "first roundAffine mismatch vs JS-fround: null"
+          ],
+          "not_contains": [
+            "roundAffine: reference != JS-fround"
+          ]
+        },
+        "timeout": 180
+      }
+    },
+    {
+      "id": "fuzz-affine-vs-fround",
+      "claim": "Written with plain affine, 2,246 of 113,480 values (1.98%) differ from step-by-step fround JS, because the builder merges small affine sums.",
+      "value": "2246 / 113480",
+      "metric": "count of values differing from JS-fround in affine mode",
+      "method": "Same fuzz run, affine build mode.",
+      "repro": "bun spikes/diff-fuzz.ts",
+      "evidence": "spikes/diff-fuzz.out",
+      "as_of": "2026-10-17",
+      "check": {
+        "cmd": [
+          "bash scripts/setup.sh > /dev/null 2>&1",
+          "bun spikes/diff-fuzz.ts"
+        ],
+        "expect": {
+          "contains": [
+            "affine: reference != JS-fround: 2246"
+          ]
+        },
+        "timeout": 180
+      }
+    },
+    {
+      "id": "fuzz-vs-float64",
+      "claim": "Against plain float64 JS, 55,336 of 113,480 roundAffine values differ (48.8%); median relative error 2.59e-8, p99 1.86e-7, 2 values above 1e-3.",
+      "value": "55336 / 113480",
+      "metric": "values differing from float64 JS, roundAffine mode",
+      "method": "Same fuzz run; relative error over differing finite values.",
+      "repro": "bun spikes/diff-fuzz.ts",
+      "evidence": "spikes/diff-fuzz.out",
+      "as_of": "2026-10-17",
+      "check": {
+        "cmd": [
+          "bash scripts/setup.sh > /dev/null 2>&1",
+          "bun spikes/diff-fuzz.ts"
+        ],
+        "expect": {
+          "contains": [
+            "roundAffine: reference != JS-float64: 55336",
+            "median 2.59e-8, p99 1.86e-7; >1e-3 (gross, e.g. branch flip or underflow): 2"
+          ]
+        },
+        "timeout": 180
+      }
+    },
+    {
+      "id": "affine-composition-example",
+      "claim": "affine(affine(x)) differs from step-by-step fround JS at 4,336 of 10,000 points; 2 built operations become 1 live one.",
+      "value": "4336 / 10000",
+      "metric": "mismatch count over a 10,000-point sweep",
+      "method": "spikes/affine-example.ts sweeps x over [-100, 100).",
+      "repro": "bun spikes/affine-example.ts",
+      "evidence": "spikes/affine-example.out",
+      "as_of": "2026-10-17",
+      "check": {
+        "cmd": [
+          "bash scripts/setup.sh > /dev/null 2>&1",
+          "bun spikes/affine-example.ts"
+        ],
+        "expect": {
+          "contains": [
+            "4336/10000",
+            "ops built 2, live 1"
+          ]
+        },
+        "timeout": 180
+      }
+    },
+    {
+      "id": "gradient-check",
+      "claim": "Backprop gradients match central differences of the float64 JS program in 3,000 of 3,000 cases (worst relative error 2.06e-7).",
+      "value": "3000/3000",
+      "metric": "agreement within 1e-3 relative",
+      "method": "spikes/grad-check.ts on 200 random programs x 5 points x 3 inputs.",
+      "repro": "bun spikes/grad-check.ts",
+      "evidence": "spikes/grad-check.out",
+      "as_of": "2026-10-17",
+      "check": {
+        "cmd": [
+          "bash scripts/setup.sh > /dev/null 2>&1",
+          "bun spikes/grad-check.ts"
+        ],
+        "expect": {
+          "contains": [
+            "3000/3000 agree within 1e-3 relative; worst 2.06e-7"
+          ]
+        },
+        "timeout": 180
+      }
+    },
+    {
+      "id": "upstream-test-suite",
+      "claim": "At 257856e, handwired's own `bun run test` reported 1,347 tests: 1,345 pass, 2 skip, 0 fail.",
+      "value": "1345 pass / 2 skip / 0 fail",
+      "metric": "bun test summary",
+      "method": "Ran once in vendor/handwired with Bun 1.4.2 on Linux x64 (about 371 s).",
+      "repro": "cd vendor/handwired && bun run test",
+      "evidence": "plans/plan-A-semiconductor.md §8",
+      "as_of": "2026-10-17",
+      "check": {
+        "manual": "the upstream suite takes about 6 minutes and tests upstream code, not this repository; rerun by hand with the repro command"
+      }
+    }
+  ]
+}

@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420" role="img" aria-labelledby="title desc">
+  <title id="title">handwired-study：手写电路的结果和你的 JS 完全一致吗？</title>
+  <desc id="desc">固定种子合成数据实测：电路参考求值与编译后求值 226,960 个值中 0 个不同；与逐步 FP32 的 JS 相比，roundAffine 写法 113,480 个中 0 个不同，普通 affine 写法 2,246 个不同；与 float64 JS 相比 55,336 个不同。R2R EWMA 测试 MSE 从 293.4 降到 185.8。</desc>
+  <rect width="1200" height="420" rx="18" fill="#0d1117"/>
+  <g id="identity" font-family="-apple-system, BlinkMacSystemFont, Segoe UI, PingFang SC, sans-serif">
+    <text x="56" y="70" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18" letter-spacing="1">STUDY · chenglou/handwired @ 257856e</text>
+    <text x="56" y="150" fill="#e6edf3" font-size="64" font-weight="700">handwired<tspan fill="#f0883e">-study</tspan></text>
+    <text x="56" y="206" fill="#e6edf3" font-size="28">手写电路的结果</text>
+    <text x="56" y="244" fill="#e6edf3" font-size="28">和你的 JS 完全一致吗？</text>
+    <text x="56" y="296" fill="#3fb950" font-size="24" font-weight="600">按 FP32：一致。</text>
+    <text x="56" y="330" fill="#8b949e" font-size="24" font-weight="600">按 float64：不一致。</text>
+    <text x="56" y="384" fill="#8b949e" font-family="ui-monospace, SFMono-Regular, Menlo, monospace" font-size="18">固定种子合成数据 · Bun 1.4.2</text>
+  </g>
+  <g id="four-evaluators" font-family="ui-monospace, SFMono-Regular, Menlo, monospace">
+    <text x="600" y="70" fill="#8b949e" font-size="18" letter-spacing="1">电路参考求值  对比  …      不同的值</text>
+    <path d="M600 88H1144" stroke="#30363d" stroke-width="2"/>
+    <g transform="translate(600 130)">
+      <text x="0" y="0" fill="#e6edf3" font-size="22">编译后的求值器</text>
+      <text x="544" y="0" fill="#3fb950" font-size="24" font-weight="700" text-anchor="end">0 / 226,960</text>
+    </g>
+    <g transform="translate(600 186)">
+      <text x="0" y="0" fill="#e6edf3" font-size="22">fround JS, roundAffine</text>
+      <text x="544" y="0" fill="#3fb950" font-size="24" font-weight="700" text-anchor="end">0 / 113,480</text>
+    </g>
+    <g transform="translate(600 242)">
+      <text x="0" y="0" fill="#e6edf3" font-size="22">fround JS, affine</text>
+      <text x="544" y="0" fill="#e3b341" font-size="24" font-weight="700" text-anchor="end">2,246 / 113,480</text>
+    </g>
+    <g transform="translate(600 298)">
+      <text x="0" y="0" fill="#e6edf3" font-size="22">普通 float64 JS</text>
+      <text x="544" y="0" fill="#8b949e" font-size="24" font-weight="700" text-anchor="end">55,336 / 113,480</text>
+    </g>
+    <path d="M600 330H1144" stroke="#30363d" stroke-width="2"/>
+    <text x="600" y="372" fill="#e6edf3" font-size="20">R2R EWMA 测试 MSE  <tspan fill="#8b949e">293.4</tspan> → <tspan fill="#f0883e" font-weight="700">185.8</tspan></text>
+    <text x="600" y="398" fill="#8b949e" font-size="18">用电路自己的梯度调 λ 和 g</text>
+  </g>
+</svg>
