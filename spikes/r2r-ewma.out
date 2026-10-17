@@ -1,0 +1,15 @@
+circuit: 1724 built ops, live 1718 , 40 runs/lot
+exactness: reference vs tensor mismatches = 0 / 3840; max |circuit(FP32) - JS float64| = 1.506e-4 nm
+grad check at lambda=0.3, g=0.1: backprop dL/dlambda=-549.353 vs central -549.353; dL/dg=-406283.2 vs central -406283.3
+grad check at lambda=0.15, g=0.09: backprop dL/dlambda=-493.272 vs central -493.266; dL/dg=-799036.0 vs central -799036.1
+grad check at lambda=0.6, g=0.105: backprop dL/dlambda=-107.669 vs central -107.669; dL/dg=-218461.2 vs central -218461.0
+hand-tuned lambda=0.3 g=1/B_NOM=0.1111: train MSE 288.90, test MSE 293.39
+grid search (2050 evals, 50x41): lambda=0.78 g=0.1120 train MSE 206.61, test MSE 202.64
+  adam step 1: train MSE(circuit) 288.90 lambda=0.3100 g=0.1091
+  adam step 50: train MSE(circuit) 194.40 lambda=0.6510 g=0.1110
+  adam step 100: train MSE(circuit) 189.62 lambda=0.7587 g=0.1110
+  adam step 150: train MSE(circuit) 189.40 lambda=0.7846 g=0.1110
+  adam step 200: train MSE(circuit) 189.40 lambda=0.7881 g=0.1110
+  adam step 250: train MSE(circuit) 189.40 lambda=0.7882 g=0.1110
+  adam step 300: train MSE(circuit) 189.40 lambda=0.7881 g=0.1110
+gradient-trained: lambda=0.7881 g=0.1110 train MSE 189.40, test MSE 185.81  (300 steps x 16 lots = 4800 forward+backward, 0.8 s)

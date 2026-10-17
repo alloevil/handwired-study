@@ -1,0 +1,2 @@
+gradient check: 3000 (program, input, coordinate) triples; 0 skipped as branch flip within h; 3000/3000 agree within 1e-3 relative; worst 2.06e-7
+disagreements: []

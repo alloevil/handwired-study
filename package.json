@@ -1,0 +1,15 @@
+{
+  "name": "handwired-study",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "setup": "bash scripts/setup.sh",
+    "spike:r2r": "bun spikes/r2r-ewma.ts",
+    "spike:r2r-check": "bun spikes/r2r-check.ts",
+    "spike:fdc": "bun spikes/fdc-threshold.ts",
+    "spike:fuzz": "bun spikes/diff-fuzz.ts",
+    "spike:grad": "bun spikes/grad-check.ts",
+    "spike:affine": "bun spikes/affine-example.ts"
+  }
+}

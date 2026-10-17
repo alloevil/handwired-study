@@ -1,0 +1,11 @@
+lambda=0.788 g=0.106: MSE 642.21
+lambda=0.788 g=0.108: MSE 352.57
+lambda=0.788 g=0.11: MSE 207.87
+lambda=0.788 g=0.1105: MSE 194.17
+lambda=0.788 g=0.111: MSE 189.40
+lambda=0.788 g=0.1111: MSE 189.52
+lambda=0.788 g=0.1115: MSE 193.56
+lambda=0.788 g=0.112: MSE 206.61
+lambda=0.788 g=0.114: MSE 347.30
+clamp hits at hand-tuned (0.3,1/9): 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+fine grid (12120 evals): lambda=0.790 g=0.1110 MSE 189.40

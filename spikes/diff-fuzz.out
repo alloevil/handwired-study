@@ -1,0 +1,18 @@
+seed 20261017, 300 random programs x 40 inputs (30% edge values incl. -0, subnormals, ties, range ends)
+  affine: programs built: 300
+  affine: reference != JS-float64: 55208
+  affine: reference != JS-fround: 2246
+  affine: values compared: 113480
+  roundAffine: programs built: 300
+  roundAffine: reference != JS-float64: 55336
+  roundAffine: values compared: 113480
+  max relative |circuit - float64 JS| (roundAffine, finite): 6.231e+30
+  roundAffine vs float64 relative error over 55336 differing values: median 2.59e-8, p99 1.86e-7; >1e-3 (gross, e.g. branch flip or underflow): 2
+  first roundAffine mismatch vs JS-fround: null
+boundary probes:
+  2^24 + 1: circuit 16777216, JS float64 16777217, JS fround 16777216
+  0.1 + 0.2: circuit 0.30000001192092896, JS float64 0.30000000000000004, JS fround 0.30000001192092896
+  input NaN: refused -> source wire 0 is outside its assumed range
+  input Infinity: refused -> source wire 0 is outside its assumed range
+  input 101: refused -> source wire 0 is outside its assumed range
+  max(2^24, -1): emitMaximum 16777215, emitMaximumExact 16777216, Math.max 16777216  (docs say emitMaximum gives 16777215)
